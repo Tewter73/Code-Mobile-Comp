@@ -1,4 +1,4 @@
-/* รีเซ็ตค่าพื้นฐาน */
+/* รีเซ็ต margin และ padding พื้นฐานของเบราว์เซอร์ */
 * {
     margin: 0;
     padding: 0;
@@ -16,18 +16,19 @@ a {
     font-weight: 600;
 }
 
-/* --- เริ่มต้นการทำ Layout แบบ Flexbox --- */
-/* 1. กล่องหลัก (อิงจาก .box ใน Hint) บังคับความสูง 100vh ให้เต็มจอพอดี */
+/* --- เริ่มโครงสร้าง Layout หลักด้วย Flexbox --- */
+
+/* 1. กล่องใหญ่ครอบทั้งเว็บ */
 .box {
     display: flex;
     flex-flow: column;
-    height: 100vh;
+    height: 100vh; /* บังคับให้ความสูงพอดีกับหน้าจอเป๊ะๆ */
 }
 
-/* 2. ส่วนหัว บังคับไม่ให้ยืด/หด */
+/* 2. ส่วน Header */
 .row.header {
-    flex: 0 1 auto;
-    background-color: #737373; /* สีเทาเข้มแบบในรูป */
+    flex: 0 1 auto; /* ล็อกความสูงไว้ ไม่ให้ยืดหรือหด */
+    background-color: #737373; 
     color: white;
     text-align: center;
     padding: 40px 20px;
@@ -37,18 +38,18 @@ a {
     font-size: 2.5rem;
 }
 
-/* 3. กล่องเนื้อหาตรงกลาง (อิงจาก .row.content ใน Hint) ให้ทำหน้าที่เป็นยางยืด */
+/* 3. กล่องเนื้อหาตรงกลาง (ส่วนนี้ต้องยืดหยุ่นได้) */
 .row.content {
-    flex: 1 1 auto;
+    flex: 1 1 auto; /* สั่งให้ขยายกินพื้นที่ว่างที่เหลือทั้งหมด */
     display: flex;
     flex-flow: row;
-    min-height: 0; /* สำคัญมาก เพื่อให้แสดง Scrollbar ด้านในได้ */
+    min-height: 0; /* ทริคสำคัญ: ป้องกันไม่ให้เนื้อหาดันกล่องจนทะลุจอ และช่วยให้เกิด Scrollbar ได้ */
 }
 
 /* 3.1 เมนูด้านซ้าย */
 nav {
     width: 200px;
-    background-color: #d9d9d9; /* สีเทาอ่อนแบบในรูป */
+    background-color: #d9d9d9; 
     padding: 20px;
     overflow-y: auto;
 }
@@ -66,32 +67,32 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* 3.2 พื้นที่เนื้อหาด้านขวา */
+/* 3.2 พื้นที่แสดงเนื้อหาด้านขวา */
 main {
-    flex: 1; /* กินพื้นที่ที่เหลือทั้งหมด */
-    background-color: #f2f2f2; /* สีเทาอ่อนมากๆ */
+    flex: 1; /* กินพื้นที่ที่เหลือจากเมนูด้านซ้าย */
+    background-color: #f2f2f2; 
     padding: 30px;
-    overflow-y: auto; /* เนื้อหายาวแค่ไหนก็เลื่อนแค่ในกล่องนี้ */
+    overflow-y: auto; /* ถ้าเนื้อหายาวเกิน ให้เลื่อน Scrollbar แค่ในส่วนนี้ */
 }
 
 main h2 {
     margin-bottom: 15px;
 }
 
-/* 4. ส่วนท้าย บังคับไม่ให้ยืด/หด ตอกหมุดติดขอบล่างเสมอ */
+/* 4. ส่วน Footer (Sticky Footer) */
 .row.footer {
-    flex: 0 1 auto;
-    background-color: #737373; /* สีเทาเข้มแบบในรูป */
+    flex: 0 1 auto; /* ล็อกความสูงไว้ พอกล่องตรงกลางขยาย ตัวนี้จะถูกดันไปติดขอบล่างจอเสมอ */
+    background-color: #737373; 
     color: white;
     text-align: center;
     padding: 20px;
     font-size: 0.9rem;
 }
 
-/* ทำให้รองรับหน้าจอมือถือ */
+/* --- สำหรับหน้าจอมือถือ (Responsive) --- */
 @media (max-width: 600px) {
     .row.content {
-        flex-direction: column;
+        flex-direction: column; /* เปลี่ยนจากเรียงซ้ายขวา เป็นบนลงล่าง */
     }
     nav {
         width: 100%;

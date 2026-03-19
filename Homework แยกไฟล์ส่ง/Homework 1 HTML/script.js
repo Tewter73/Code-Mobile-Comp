@@ -1,4 +1,4 @@
-// เตรียมข้อมูลสำหรับแต่ละหมวดหมู่
+// สร้าง Object เก็บข้อมูลเนื้อหาแยกตามหมวดหมู่ เพื่อง่ายต่อการดึงไปแสดงผล
 const contentData = {
     'cardio': {
         title: "คาร์ดิโอ (Cardio Training)",
@@ -40,12 +40,13 @@ const contentData = {
     }
 };
 
-// ฟังก์ชันสำหรับเปลี่ยนเนื้อหาเมื่อคลิกเมนู
+// ฟังก์ชันสำหรับอัปเดตเนื้อหาหน้าเว็บ (DOM Manipulation) เมื่อคลิกเมนู
 function changeContent(category) {
+    // อ้างอิงไปยัง Element ใน HTML ที่ต้องการเปลี่ยนข้อมูล
     const titleElement = document.getElementById('content-title');
     const bodyElement = document.getElementById('content-body');
     
-    // นำข้อมูลจาก Object มาใส่แทนที่ใน HTML
+    // ดึงข้อมูลจาก Object ตาม key (category) มาแสดงผลแทนที่เนื้อหาเดิม
     titleElement.innerHTML = contentData[category].title;
     bodyElement.innerHTML = contentData[category].body;
 }
