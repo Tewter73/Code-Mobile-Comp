@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมคำนวณภาษีเงินได้บุคคลธรรมดา</title>
+    <style>
+        body {
+            font-family: 'Sarabun', Tahoma, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        /* กำหนดสไตล์ให้ช่องที่ Read-only */
+        input[readonly] {
+            background-color: #e9ecef;
+            color: #495057;
+            cursor: not-allowed;
+            border: 1px solid #ced4da;
+        }
+        .income-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        .btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-add {
+            background-color: #4CAF50;
+        }
+        .btn-remove {
+            background-color: #f44336;
+        }
+        #error-message {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+        .hr-divider {
+            border: 0;
+            border-top: 1px dashed #ccc;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>โปรแกรมคำนวณภาษีเงินได้บุคคลธรรมดา</h2>
+        
+        <div class="form-group">
+            <label>รายได้ (บาท)</label>
+            <div id="income-container">
+                <div class="income-row">
+                    <input type="text" class="income-input" oninput="calculateTax()" placeholder="กรอกรายได้...">
+                    <button class="btn btn-add" id="add-btn" onclick="addIncomeBox()">+</button>
+                    <button class="btn btn-remove" id="remove-btn" onclick="removeIncomeBox()">-</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="error-message"></div>
+
+        <hr class="hr-divider">
+
+        <div class="form-group">
+            <label>รายได้รวม (บาท)</label>
+            <input type="text" id="total-income" readonly>
+        </div>
+        <div class="form-group">
+            <label>อัตราภาษีสูงสุดที่ตกเกณฑ์</label>
+            <input type="text" id="tax-rate" readonly>
+        </div>
+        <div class="form-group">
+            <label>ภาษีที่ต้องจ่าย (บาท)</label>
+            <input type="text" id="tax-amount" readonly>
+        </div>
+    </div>
+
+    <script>
+        // จำนวนช่องรายได้ปัจจุบัน และจำกัดสูงสุดที่ 3 ช่อง
+        let incomeBoxCount = 1;
+        const MAX_BOXES = 3;
+
+        // อัปเดตสถานะของปุ่ม + และ -
+        function updateButtons() {
+            document.getElementById('add-btn').disabled = (incomeBoxCount >= MAX_BOXES);
+            document.getElementById('remove-btn').disabled = (incomeBoxCount <= 1);
+        }
+
+        // ฟังก์ชันเพิ่มช่องรายได้
+        function addIncomeBox() {
+            if (incomeBoxCount >= MAX_BOXES) return;
+
+            const container = document.getElementById('income-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'income-row';
+            // ผูก Event oninput ทันทีที่สร้างกล่องใหม่
+            newRow.innerHTML = `<input type="text" class="income-input" oninput="calculateTax()" placeholder="กรอกรายได้เพิ่มเติม...">`;
+            
+            container.appendChild(newRow);
+            incomeBoxCount++;
+            updateButtons();
+            calculateTax(); // คำนวณใหม่เมื่อเพิ่มช่องว่างๆ
+        }
+
+        // ฟังก์ชันลบช่องรายได้
+        function removeIncomeBox() {
+            if (incomeBoxCount <= 1) return;
+
+            const container = document.getElementById('income-container');
+            container.removeChild(container.lastChild); // ลบกล่องล่างสุด
+            incomeBoxCount--;
+            updateButtons();
+            calculateTax(); // คำนวณใหม่เมื่อลบช่องออก
+        }
+
+        // ฟังก์ชันหลักที่ทำงานแบบ Real-time (Trigger จาก oninput)
+        function calculateTax() {
+            const inputs = document.querySelectorAll('.income-input');
+            const errorMsgElement = document.getElementById('error-message');
+            const totalIncomeElement = document.getElementById('total-income');
+            const taxRateElement = document.getElementById('tax-rate');
+            const taxAmountElement = document.getElementById('tax-amount');
+            
+            let totalIncome = 0;
+            let hasError = false;
+            errorMsgElement.innerText = ''; // ล้างข้อความแจ้งเตือน
+
+            // 1. ตรวจสอบข้อมูลและรวมรายได้ทั้งหมด
+            inputs.forEach(input => {
+                const valueStr = input.value.trim();
+                if (valueStr === '') return; // ข้ามช่องที่ไม่ได้กรอก
+
+                const valueNum = Number(valueStr);
+
+                // ดักจับ Error: ไม่ใช่ตัวเลข (non-numeric)
+                if (isNaN(valueNum)) {
+                    hasError = true;
+                    errorMsgElement.innerText = '⚠️ กรุณากรอกตัวเลขเท่านั้น (ห้ามใส่ตัวอักษร)';
+                } 
+                // ดักจับ Error: ค่าติดลบ
+                else if (valueNum < 0) {
+                    hasError = true;
+                    errorMsgElement.innerText = '⚠️ มีรายได้บางรายการเป็นค่าติดลบ';
+                } 
+                // ถ้ายอดถูกต้อง ให้นำมารวมกัน
+                else {
+                    totalIncome += valueNum;
+                }
+            });
+
+            // หากมี Error ให้เคลียร์ค่าในช่อง Read-only ทิ้งและหยุดการคำนวณ
+            if (hasError) {
+                totalIncomeElement.value = '';
+                taxRateElement.value = '';
+                taxAmountElement.value = '';
+                return;
+            }
+
+            // แสดงยอดรวมรายได้
+            totalIncomeElement.value = totalIncome.toLocaleString('th-TH', {minimumFractionDigits: 2});
+
+            // 2. คำนวณภาษีแบบขั้นบันได
+            let totalTax = 0;
+            let maxRate = 0; // เก็บอัตราภาษีเปอร์เซ็นต์สูงสุดที่ไปถึง
+            let remainingIncome = totalIncome;
+
+            if (remainingIncome > 5000000) {
+                totalTax += (remainingIncome - 5000000) * 0.35;
+                remainingIncome = 5000000;
+                if (maxRate === 0) maxRate = 35;
+            }
+            if (remainingIncome > 2000000) {
+                totalTax += (remainingIncome - 2000000) * 0.30;
+                remainingIncome = 2000000;
+                if (maxRate === 0) maxRate = 30;
+            }
+            if (remainingIncome > 1000000) {
+                totalTax += (remainingIncome - 1000000) * 0.25;
+                remainingIncome = 1000000;
+                if (maxRate === 0) maxRate = 25;
+            }
+            if (remainingIncome > 750000) {
+                totalTax += (remainingIncome - 750000) * 0.20;
+                remainingIncome = 750000;
+                if (maxRate === 0) maxRate = 20;
+            }
+            if (remainingIncome > 500000) {
+                totalTax += (remainingIncome - 500000) * 0.15;
+                remainingIncome = 500000;
+                if (maxRate === 0) maxRate = 15;
+            }
+            if (remainingIncome > 300000) {
+                totalTax += (remainingIncome - 300000) * 0.10;
+                remainingIncome = 300000;
+                if (maxRate === 0) maxRate = 10;
+            }
+            if (remainingIncome > 150000) {
+                totalTax += (remainingIncome - 150000) * 0.05;
+                remainingIncome = 150000;
+                if (maxRate === 0) maxRate = 5;
+            }
+
+            // 3. นำผลลัพธ์ไปแสดงบนหน้าจอ
+            taxRateElement.value = maxRate > 0 ? `${maxRate}%` : 'ได้รับการยกเว้น';
+            taxAmountElement.value = totalTax.toLocaleString('th-TH', {minimumFractionDigits: 2});
+        }
+
+        // ตั้งค่าปุ่มตั้งแต่เริ่มต้น
+        updateButtons();
+    </script>
+
+</body>
+</html>

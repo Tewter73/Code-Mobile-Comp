@@ -1,0 +1,157 @@
+/* คัดลอก CSS Reset และโครงสร้าง Flexbox มาเพื่อรักษา Layout เดิม */
+/* (เหมือนกับ theme-color.css ทุกประการ จนถึงส่วนกำหนดสี) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    padding: 30px;
+    text-align: center;
+    position: relative;
+}
+
+.header button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.content-wrapper {
+    display: flex;
+    flex: 1 1 auto; 
+    padding: 20px;
+}
+
+.sidebar {
+    width: 250px;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar .menu-link {
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 20px;
+    border-radius: 8px;
+}
+
+.content-block {
+    display: none;
+}
+
+.content-block.active {
+    display: block;
+}
+
+.content-block h2 {
+    margin-bottom: 20px;
+}
+
+.content-block p, .content-block ul {
+    margin-bottom: 15px;
+}
+
+.content-block ul {
+    padding-left: 20px;
+}
+
+.footer {
+    padding: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* --- กำหนดสีโหมด ขาว-ดำ (Grayscale Theme) --- */
+body {
+    background-color: #000000; /* พื้นหลังดำเข้ม */
+    color: #f9fafb; /* ตัวหนังสือขาว */
+}
+
+/* บังคับลิงก์ทั่วไปให้เป็นสีขาว */
+a {
+    color: #f9fafb;
+}
+
+.header {
+    background-color: #333333; /* หัวเว็บสีเทาเข้ม */
+    color: #f9fafb;
+    border-bottom: 1px solid #444444;
+}
+
+.header h1 { color: #f9fafb; }
+.header button {
+    background-color: #f9fafb; /* ปุ่มสีขาว */
+    border: 1px solid #cccccc;
+    color: #1a1a1a;
+}
+
+.sidebar {
+    background-color: #222222; /* เมนูสีเทาเข้ม */
+    border: 1px solid #444444;
+}
+
+.sidebar h2 { color: white; }
+
+.sidebar .menu-link:hover {
+    background-color: #444444; /* เอฟเฟกต์โฮเวอร์เมนู */
+}
+
+.sidebar .menu-link.active {
+    background-color: #f9fafb; /* สีเมนูที่ถูกเลือก (ขาว) */
+    color: #1a1a1a; /* ตัวหนังสือดำ */
+}
+
+.main-content {
+    background-color: #1a1a1a; /* พื้นหลังเนื้อหาสีเทาเข้มเกือบดำ */
+    border: 1px solid #444444;
+    color: #f9fafb;
+}
+
+.main-content h2 { color: white; }
+
+.footer {
+    background-color: #1a1a1a; /* ท้ายเว็บสีเทาเข้ม */
+    border-top: 1px solid #444444;
+    color: #aaaaaa;
+}

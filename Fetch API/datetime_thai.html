@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วันเวลาไทย</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Chakra+Petch:wght@300;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --card: #111827;
+    --border: #1e3a5f;
+    --accent: #38bdf8;
+    --accent2: #0ea5e9;
+    --success: #34d399;
+    --error: #f87171;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow: rgba(56, 189, 248, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* grid dots */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(56,189,248,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 560px;
+    padding: 24px;
+  }
+
+  /* Header label */
+  .label {
+    font-family: 'Chakra Petch', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    opacity: 0.7;
+    text-align: center;
+  }
+
+  /* Main card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(56,189,248,0.05),
+      0 25px 60px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .status-dot.error {
+    background: var(--error);
+    box-shadow: 0 0 8px var(--error);
+  }
+
+  .status-dot.loading {
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .status-text {
+    font-family: 'Chakra Petch', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Date display */
+  .date-section {
+    margin-bottom: 8px;
+  }
+
+  .date-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: 'Chakra Petch', monospace;
+  }
+
+  .date-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    min-height: 32px;
+    transition: opacity 0.3s;
+  }
+
+  /* Time display */
+  .time-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .time-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: 'Chakra Petch', monospace;
+  }
+
+  .time-value {
+    font-family: 'Chakra Petch', monospace;
+    font-size: 52px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(56,189,248,0.3);
+    min-height: 64px;
+    line-height: 1.1;
+    transition: opacity 0.3s;
+  }
+
+  .time-suffix {
+    font-size: 20px;
+    color: var(--muted);
+    margin-left: 4px;
+    font-weight: 300;
+  }
+
+  /* Error box */
+  .error-box {
+    display: none;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.25);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 24px;
+  }
+
+  .error-box.visible { display: flex; }
+
+  .error-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .error-title {
+    font-weight: 700;
+    color: var(--error);
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .error-detail {
+    font-size: 12px;
+    color: rgba(248,113,113,0.6);
+    font-family: 'Chakra Petch', monospace;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .footer-api {
+    font-family: 'Chakra Petch', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    opacity: 0.5;
+  }
+
+  .footer-interval {
+    font-family: 'Chakra Petch', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .refresh-bar {
+    width: 60px;
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .refresh-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* Skeleton shimmer */
+  .shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+    border-radius: 6px;
+    color: transparent !important;
+    text-shadow: none !important;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="label">⬡ OCSC Datetime Service</div>
+  <div class="card">
+
+    <div class="status-bar">
+      <div class="status-dot loading" id="statusDot"></div>
+      <span class="status-text" id="statusText">กำลังเชื่อมต่อ...</span>
+    </div>
+
+    <div class="date-section">
+      <div class="date-label">📅 วันที่</div>
+      <div class="date-value shimmer" id="dateDisplay">วันที่ 00 มกราคม 0000</div>
+    </div>
+
+    <div class="time-section">
+      <div class="time-label">🕐 เวลา</div>
+      <div class="time-value shimmer" id="timeDisplay">
+        00:00:00<span class="time-suffix">น.</span>
+      </div>
+    </div>
+
+    <div class="error-box" id="errorBox">
+      <div class="error-icon">⚠️</div>
+      <div>
+        <div class="error-title">ระบบเครือข่ายล้มเหลว</div>
+        <div class="error-detail" id="errorDetail"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-api">API: learningportal.ocsc.go.th</div>
+      <div class="footer-interval">
+        <span>อัปเดตทุก 1 วิ</span>
+        <div class="refresh-bar">
+          <div class="refresh-fill" id="refreshFill"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const THAI_MONTHS = [
+    'มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+    'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'
+  ];
+
+  const API_URL = 'https://learningportal.ocsc.go.th/learningspaceapi/localdatetime';
+  const TIMEOUT_MS = 3000;
+
+  const dateDisplay  = document.getElementById('dateDisplay');
+  const timeDisplay  = document.getElementById('timeDisplay');
+  const statusDot    = document.getElementById('statusDot');
+  const statusText   = document.getElementById('statusText');
+  const errorBox     = document.getElementById('errorBox');
+  const errorDetail  = document.getElementById('errorDetail');
+  const refreshFill  = document.getElementById('refreshFill');
+
+  function formatThai(isoString) {
+    const d = new Date(isoString);
+    const buddhistYear = d.getFullYear() + 543;
+    const day   = d.getDate().toString().padStart(2, '0');
+    const month = THAI_MONTHS[d.getMonth()];
+    const hh    = d.getHours().toString().padStart(2, '0');
+    const mm    = d.getMinutes().toString().padStart(2, '0');
+    const ss    = d.getSeconds().toString().padStart(2, '0');
+    return {
+      date: `วันที่ ${day} ${month} ${buddhistYear}`,
+      time: `${hh}:${mm}:${ss}`
+    };
+  }
+
+  function setLoading() {
+    statusDot.className  = 'status-dot loading';
+    statusText.textContent = 'กำลังดึงข้อมูล...';
+  }
+
+  function setSuccess() {
+    statusDot.className  = 'status-dot';
+    statusText.textContent = 'เชื่อมต่อสำเร็จ';
+    errorBox.classList.remove('visible');
+    dateDisplay.classList.remove('shimmer');
+    timeDisplay.classList.remove('shimmer');
+  }
+
+  function setError(msg) {
+    statusDot.className  = 'status-dot error';
+    statusText.textContent = 'การเชื่อมต่อล้มเหลว';
+    errorBox.classList.add('visible');
+    errorDetail.textContent = msg;
+    dateDisplay.classList.add('shimmer');
+    timeDisplay.innerHTML = `--:--:--<span class="time-suffix">น.</span>`;
+    dateDisplay.textContent = 'ไม่สามารถดึงข้อมูลได้';
+  }
+
+  function fetchDatetime() {
+    setLoading();
+
+    const controller = new AbortController();
+    const timeoutId  = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    fetch(API_URL, { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const { date, time } = formatThai(data.datetime);
+        setSuccess();
+        dateDisplay.textContent = date;
+        timeDisplay.innerHTML   = `${time}<span class="time-suffix">น.</span>`;
+      })
+      .catch(e => {
+        const msg = e.name === 'AbortError'
+          ? 'network connection timeout (หมดเวลาเชื่อมต่อ)'
+          : e.toString();
+        setError(msg);
+        console.error(e);
+      })
+      .finally(() => {
+        clearTimeout(timeoutId);
+      });
+  }
+
+  // Progress bar animation (resets every second)
+  let fillPct = 0;
+  setInterval(() => {
+    fillPct = (fillPct + 10) % 110;
+    refreshFill.style.width = Math.min(fillPct, 100) + '%';
+  }, 100);
+
+  // Fetch immediately, then every 1 second
+  fetchDatetime();
+  setInterval(fetchDatetime, 1000);
+</script>
+</body>
+</html>

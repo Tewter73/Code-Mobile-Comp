@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์รวมข้อมูลการออกกำลังกาย</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link id="theme-link" rel="stylesheet" href="theme-color.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header">
+            <h1>Fitness Guide TH</h1>
+            <p>แหล่งรวมความรู้เพื่อสุขภาพที่ดี</p>
+            <button id="mode-toggle">เปิดโหมด ขาว-ดำ</button>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <h2>ประเภทการออกกำลังกาย</h2>
+                <ul>
+                    <li><a href="#" class="menu-link active" data-content="cardio">คาร์ดิโอ (Cardio)</a></li>
+                    <li><a href="#" class="menu-link" data-content="strength">เวทเทรนนิ่ง (Strength)</a></li>
+                    <li><a href="#" class="menu-link" data-content="yoga">โยคะ (Yoga)</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <article id="content-cardio" class="content-block active">
+                    <h2>คาร์ดิโอ (Cardio Training)</h2>
+                    <p>การออกกำลังกายแบบคาร์ดิโอเน้นการบริหารหัวใจและปอดให้แข็งแรง ช่วยกระตุ้นระบบเผาผลาญได้ดี เหมาะสำหรับการลดน้ำหนักและเพิ่มความทนทานของร่างกาย กิจกรรมยอดนิยม ได้แก่:</p>
+                    <ul>
+                        <li><strong>การวิ่ง:</strong> เริ่มต้นได้ง่าย เพียงมีรองเท้าวิ่งคู่ใจ</li>
+                        <li><strong>การปั่นจักรยาน:</strong> ช่วยลดแรงกระแทก เหมาะสำหรับทุกวัย</li>
+                        <li><strong>การว่ายน้ำ:</strong> บริหารทุกส่วนของร่างกาย ลดแรงกดที่ข้อต่อ</li>
+                    </ul>
+                    <p>ควรทำอย่างน้อย 150 นาทีต่อสัปดาห์</p>
+                </article>
+
+                <article id="content-strength" class="content-block">
+                    <h2>เวทเทรนนิ่ง (Strength Training)</h2>
+                    <p>เน้นการสร้างกล้ามเนื้อ ความแข็งแรง และความหนาแน่นของกระดูกโดยการออกแรงต้าน เหมาะสำหรับการกระชับสัดส่วนและเพิ่มอัตราการเผาผลาญในระยะยาว ตัวอย่างกิจกรรม:</p>
+                    <ul>
+                        <li><strong>การยกน้ำหนัก (Bodybuilding):</strong> ใช้ดัมเบลหรือบาร์เบล</li>
+                        <li><strong>บอดี้เวท (Bodyweight):</strong> ใช้กน้ำหนักตัว เช่น วิดพื้น สควอท</li>
+                        <li><strong>Resistance Bands:</strong> ใช้ยางยืดออกกำลังกาย</li>
+                    </ul>
+                    <p>แนะนำให้ทำ 2-3 วันต่อสัปดาห์</p>
+                </article>
+
+                <article id="content-yoga" class="content-block">
+                    <h2>โยคะ (Yoga)</h2>
+                    <p>เป็นการออกกำลังกายที่เน้นความยืดหยุ่น การทรงตัว และความสัมพันธ์ระหว่างลมหายใจกับร่างกาย ช่วยลดความเครียด ผ่อนคลายกล้ามเนื้อ และฝึกสมาธิ:</p>
+                    <ul>
+                        <li><strong>หฐโยคะ (Hatha):</strong> เน้นท่าพื้นฐานช้าๆ</li>
+                        <li><strong>วินยาสะ (Vinyasa):</strong> เน้นการเคลื่อนไหวตามจังหวะลมหายใจ</li>
+                        <li><strong>หยินโยคะ (Yin):</strong> ค้างท่าไว้เพื่อยืดเหยียดลึก</li>
+                    </ul>
+                    <p>สามารถทำได้ทุกวันเพื่อความผ่อนคลาย</p>
+                </article>
+            </main>
+        </div>
+
+        <footer class="footer">
+            <p>นิสิต: คุณานนต์ โสภาเจริญ | รหัสนิสิต: 6634406123</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
