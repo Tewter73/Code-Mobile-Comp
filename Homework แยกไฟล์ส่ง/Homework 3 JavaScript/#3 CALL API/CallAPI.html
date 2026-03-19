@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แสดงวันเวลาภาษาไทย Fetch API</title>
+    <style>
+        body {
+            font-family: 'Sarabun', Tahoma, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        
+        #datetime-display {
+            /* ขยายขนาดฟอนต์ให้ใหญ่ขึ้นมาก */
+            font-size: 48px; 
+            font-weight: bold;
+            /* เพิ่มพื้นที่ว่างรอบข้อความให้กล่องดูใหญ่ขึ้น */
+            padding: 40px 60px; 
+            /* เพิ่มความโค้งมนให้สมดุลกับขนาดกล่อง */
+            border-radius: 16px; 
+            background: #fff;
+            /* ปรับเงาให้ดูมีมิติสอดคล้องกับกล่องที่ใหญ่ขึ้น */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            text-align: center;
+        }
+
+        /* ปรับขนาดฟอนต์ให้เล็กลงอัตโนมัติเมื่อเปิดบนหน้าจอมือถือ */
+        @media (max-width: 768px) {
+            #datetime-display {
+                font-size: 28px;
+                padding: 30px 40px;
+            }
+        }
+
+        .error {
+            color: #dc3545; /* ปรับสีแดงให้ดูสบายตาขึ้น */
+        }
+        .success {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="datetime-display">กำลังโหลดข้อมูล...</div>
+
+    <script>
+        // ฟังก์ชันสำหรับแปลงรูปแบบวันที่ (ISO 8601) เป็นข้อความภาษาไทยตาม Format ที่กำหนด
+        function formatThaiDateTime(isoString) {
+            const date = new Date(isoString);
+            const thaiMonths = [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            ];
+            
+            const day = date.getDate();
+            const month = thaiMonths[date.getMonth()];
+            const year = date.getFullYear() + 543; // แปลง ค.ศ. เป็น พ.ศ.
+            
+            // เติม 0 ด้านหน้าหากตัวเลขหลักเดียว
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return `วันที่ ${day} ${month} ${year}\nเวลา ${hours}:${minutes}:${seconds} น.`;
+        }
+
+        // ฟังก์ชันหลักในการดึงข้อมูล
+        function fetchDateTime() {
+            const apiUrl = 'https://learningportal.ocsc.go.th/learningspaceapi/localdatetime';
+            const displayElement = document.getElementById('datetime-display');
+            
+            // ใช้ AbortController เพื่อทำ Timeout (ตั้งไว้ 3 วินาทีตามโจทย์)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000); 
+
+            fetch(apiUrl, { signal: controller.signal })
+                .then(response => {
+                    // หากจำลอง Error ด้วยการ Throw ดื้อๆ สามารถเอาคอมเมนต์ด้านล่างออกได้เลย
+                    // throw new Error('network connection timeout'); 
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // แปลง response เป็น JSON
+                })
+                .then(data => {
+                    // เมื่อได้ข้อมูลมา นำข้อมูล data.datetime มาจัด Format
+                    const thaiDateTimeStr = formatThaiDateTime(data.datetime);
+                    
+                    displayElement.innerText = thaiDateTimeStr;
+                    displayElement.className = 'success';
+                })
+                .catch(error => {
+                    // จัดการกรณี Error (รวมถึง Timeout จากการ abort และ Network Error กรณีปิดเน็ต)
+                    console.log('Error details:', error.toString());
+                    displayElement.innerText = 'ระบบเครือข่ายล้มเหลว';
+                    displayElement.className = 'error';
+                })
+                .finally(() => {
+                    // ยกเลิก Timeout เพื่อไม่ให้กินหน่วยความจำเมื่อ Fetch ทำงานเสร็จก่อน
+                    clearTimeout(timeoutId);
+                });
+        }
+
+        // เรียกใช้งานครั้งแรกทันที
+        fetchDateTime();
+
+        // ตั้งเวลาให้เรียกฟังก์ชันอัปเดตทุกๆ 1 วินาที (1000 มิลลิวินาที)
+        setInterval(fetchDateTime, 1000);
+    </script>
+
+</body>
+</html>

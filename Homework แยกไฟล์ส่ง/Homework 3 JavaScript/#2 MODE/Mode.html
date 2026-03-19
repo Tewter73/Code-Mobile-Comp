@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Dark/Light Mode</title>
+    <style>
+        /* 1. รีเซ็ตค่าและใช้ฟอนต์แนว Minimal (ระบบจะดึงฟอนต์ที่สวยที่สุดของเครื่องมาใช้) */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f7; /* สีขาวอมเทานิดๆ ดูพรีเมียมแบบ Apple */
+            color: #1d1d1f;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            
+            /* เอฟเฟกต์เฟดสี นุ่มนวล 0.5 วินาที */
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* 2. จัดกลุ่มเนื้อหาให้อยู่ตรงกลางจอ */
+        .container {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #6e6e73; /* สีเทาสำหรับข้อความรอง ให้ดูมีมิติ */
+            margin-bottom: 35px;
+            line-height: 1.5;
+            transition: color 0.5s ease;
+        }
+
+        /* 3. ตกแต่งปุ่มสไตล์ Minimal */
+        button {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #1d1d1f;
+            border: 1px solid #d2d2d7;
+            border-radius: 30px; /* ปุ่มทรงแคปซูล */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* เงาบางๆ ให้ปุ่มดูลอยขึ้นมา */
+            
+            transition: all 0.3s ease; /* เอฟเฟกต์ตอนโฮเวอร์เมาส์ */
+        }
+
+        /* เอฟเฟกต์ตอนเอาเมาส์ชี้ปุ่ม */
+        button:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px); /* ปุ่มขยับลอยขึ้นนิดนึง */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ------------------------------------------- */
+        /* 4. คลาสสำหรับโหมดมืด (Dark Mode) */
+        /* ------------------------------------------- */
+        body.dark-mode {
+            background-color: #121212; /* สีดำที่ไม่ใช่ดำสนิท ช่วยถนอมสายตา */
+            color: #f5f5f7;
+        }
+
+        body.dark-mode p {
+            color: #a1a1a6; /* สีเทาสำหรับข้อความรองในโหมดมืด */
+        }
+
+        /* ตกแต่งปุ่มเวลาอยู่ในโหมดมืด */
+        body.dark-mode button {
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border-color: #3c3c3c;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode button:hover {
+            background-color: #3a3a3a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Toggle Dark/Light Mode</h1>
+        <p>Click the button to toggle between dark and light mode for this page.</p>
+        <button onclick="toggleTheme()" id="theme-btn">Toggle dark mode</button>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+            
+            const btn = document.getElementById("theme-btn");
+            if (document.body.classList.contains("dark-mode")) {
+                btn.innerText = "Toggle light mode";
+            } else {
+                btn.innerText = "Toggle dark mode";
+            }
+        }
+    </script>
+
+</body>
+</html>

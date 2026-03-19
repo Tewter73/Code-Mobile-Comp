@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมคำนวณภาษีเงินได้บุคคลธรรมดา</title>
+    <style>
+        body {
+            font-family: 'Sarabun', Tahoma, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 0; 
+            display: flex;
+            justify-content: center; 
+            align-items: center;     
+            min-height: 100vh;       
+        }
+
+        /* 1. ปรับขนาดกล่องหลักให้กว้างขึ้น */
+        .main-wrapper {
+            display: flex;
+            background-color: white;
+            padding: 40px; /* เพิ่มพื้นที่ว่างด้านในให้ดูโปร่งขึ้น */
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            gap: 40px; 
+            max-width: 1200px; /* <--- ปรับตรงนี้ให้ขยายใหญ่ขึ้น (จากเดิม 900px) */
+            width: 100%;
+            flex-wrap: wrap; 
+        }
+
+        .form-section {
+            flex: 1;
+            min-width: 350px;
+        }
+
+        .image-section {
+            flex: 1.2; /* ให้ฝั่งรูปภาพกว้างกว่าฝั่งฟอร์มนิดหน่อย จะได้โชว์ตารางชัดๆ */
+            min-width: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4; 
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px dashed #ccc;
+        }
+
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input[type="text"] {
+            padding: 10px;
+            width: 100%; 
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[readonly] {
+            background-color: #e9ecef;
+            color: #495057;
+            cursor: not-allowed;
+            border: 1px solid #ced4da;
+        }
+
+        /* 2. พระเอกของเรา: เปลี่ยนจาก flex เป็น grid เพื่อล็อกขนาดกล่อง */
+        .income-row {
+            display: grid;
+            /* แบ่งพื้นที่เป็น: ส่วนกล่องข้อความ (1fr) | ปุ่ม+ (35px) | ปุ่ม- (35px) */
+            grid-template-columns: 1fr 35px 35px; 
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-add { background-color: #4CAF50; }
+        .btn-remove { background-color: #f44336; }
+        
+        #error-message {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+        .hr-divider {
+            border: 0;
+            border-top: 1px dashed #ccc;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        
+        <div class="form-section">
+            <h2>โปรแกรมคำนวณภาษีเงินได้บุคคลธรรมดา</h2>
+            
+            <div class="form-group">
+                <label>รายได้ (บาท)</label>
+                <div id="income-container">
+                    <div class="income-row">
+                        <input type="text" class="income-input" oninput="calculateTax()" placeholder="กรอกรายได้...">
+                        <button class="btn btn-add" id="add-btn" onclick="addIncomeBox()">+</button>
+                        <button class="btn btn-remove" id="remove-btn" onclick="removeIncomeBox()">-</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error-message"></div>
+
+            <hr class="hr-divider">
+
+            <div class="form-group">
+                <label>รายได้รวม (บาท)</label>
+                <input type="text" id="total-income" readonly>
+            </div>
+            <div class="form-group">
+                <label>อัตราภาษีสูงสุดที่ตกเกณฑ์</label>
+                <input type="text" id="tax-rate" readonly>
+            </div>
+            <div class="form-group">
+                <label>ภาษีที่ต้องจ่าย (บาท)</label>
+                <input type="text" id="tax-amount" readonly>
+            </div>
+        </div>
+
+        <div class="image-section">
+            <img src="tax-table.jpg" alt="ตารางอัตราภาษีเงินได้บุคคลธรรมดาใหม่">
+        </div>
+
+    </div>
+
+    <script>
+        let incomeBoxCount = 1;
+        const MAX_BOXES = 3;
+
+        function updateButtons() {
+            document.getElementById('add-btn').disabled = (incomeBoxCount >= MAX_BOXES);
+            document.getElementById('remove-btn').disabled = (incomeBoxCount <= 1);
+        }
+
+        function addIncomeBox() {
+            if (incomeBoxCount >= MAX_BOXES) return;
+            const container = document.getElementById('income-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'income-row';
+            // เพิ่มเข้ามาแค่ Input ตัว Grid CSS จะล็อกความยาวให้เท่าข้างบนเอง
+            newRow.innerHTML = `<input type="text" class="income-input" oninput="calculateTax()" placeholder="กรอกรายได้เพิ่มเติม...">`;
+            container.appendChild(newRow);
+            incomeBoxCount++;
+            updateButtons();
+            calculateTax(); 
+        }
+
+        function removeIncomeBox() {
+            if (incomeBoxCount <= 1) return;
+            const container = document.getElementById('income-container');
+            container.removeChild(container.lastChild); 
+            incomeBoxCount--;
+            updateButtons();
+            calculateTax(); 
+        }
+
+        function calculateTax() {
+            const inputs = document.querySelectorAll('.income-input');
+            const errorMsgElement = document.getElementById('error-message');
+            const totalIncomeElement = document.getElementById('total-income');
+            const taxRateElement = document.getElementById('tax-rate');
+            const taxAmountElement = document.getElementById('tax-amount');
+            
+            let totalIncome = 0;
+            let hasError = false;
+            errorMsgElement.innerText = ''; 
+
+            inputs.forEach(input => {
+                const valueStr = input.value.trim();
+                if (valueStr === '') return; 
+
+                const valueNum = Number(valueStr);
+
+                if (isNaN(valueNum)) {
+                    hasError = true;
+                    errorMsgElement.innerText = '⚠️ กรุณากรอกตัวเลขเท่านั้น (ห้ามใส่ตัวอักษร)';
+                } else if (valueNum < 0) {
+                    hasError = true;
+                    errorMsgElement.innerText = '⚠️ มีรายได้บางรายการเป็นค่าติดลบ';
+                } else {
+                    totalIncome += valueNum;
+                }
+            });
+
+            if (hasError) {
+                totalIncomeElement.value = '';
+                taxRateElement.value = '';
+                taxAmountElement.value = '';
+                return;
+            }
+
+            totalIncomeElement.value = totalIncome.toLocaleString('th-TH', {minimumFractionDigits: 2});
+
+            let totalTax = 0;
+            let maxRate = 0; 
+            let remainingIncome = totalIncome;
+
+            if (remainingIncome > 5000000) {
+                totalTax += (remainingIncome - 5000000) * 0.35;
+                remainingIncome = 5000000;
+                if (maxRate === 0) maxRate = 35;
+            }
+            if (remainingIncome > 2000000) {
+                totalTax += (remainingIncome - 2000000) * 0.30;
+                remainingIncome = 2000000;
+                if (maxRate === 0) maxRate = 30;
+            }
+            if (remainingIncome > 1000000) {
+                totalTax += (remainingIncome - 1000000) * 0.25;
+                remainingIncome = 1000000;
+                if (maxRate === 0) maxRate = 25;
+            }
+            if (remainingIncome > 750000) {
+                totalTax += (remainingIncome - 750000) * 0.20;
+                remainingIncome = 750000;
+                if (maxRate === 0) maxRate = 20;
+            }
+            if (remainingIncome > 500000) {
+                totalTax += (remainingIncome - 500000) * 0.15;
+                remainingIncome = 500000;
+                if (maxRate === 0) maxRate = 15;
+            }
+            if (remainingIncome > 300000) {
+                totalTax += (remainingIncome - 300000) * 0.10;
+                remainingIncome = 300000;
+                if (maxRate === 0) maxRate = 10;
+            }
+            if (remainingIncome > 150000) {
+                totalTax += (remainingIncome - 150000) * 0.05;
+                remainingIncome = 150000;
+                if (maxRate === 0) maxRate = 5;
+            }
+
+            taxRateElement.value = maxRate > 0 ? `${maxRate}%` : 'ได้รับการยกเว้น';
+            taxAmountElement.value = totalTax.toLocaleString('th-TH', {minimumFractionDigits: 2});
+        }
+
+        updateButtons();
+    </script>
+
+</body>
+</html>
