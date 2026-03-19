@@ -10,23 +10,25 @@
             background-color: #f9f9f9;
             padding: 20px;
             margin: 0; 
+            
+            /* จัดให้หน้าต่างโปรแกรมอยู่กึ่งกลางหน้าจอเสมอ */
             display: flex;
             justify-content: center; 
             align-items: center;     
             min-height: 100vh;       
         }
 
-        /* 1. ปรับขนาดกล่องหลักให้กว้างขึ้น */
+        /* กล่องใหญ่สุดสำหรับคลุมเนื้อหาทั้งหมด (แบ่งเป็น 2 ฝั่ง: ซ้ายฟอร์ม ขวารูปตาราง) */
         .main-wrapper {
             display: flex;
             background-color: white;
-            padding: 40px; /* เพิ่มพื้นที่ว่างด้านในให้ดูโปร่งขึ้น */
+            padding: 40px; 
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.08);
             gap: 40px; 
-            max-width: 1200px; /* <--- ปรับตรงนี้ให้ขยายใหญ่ขึ้น (จากเดิม 900px) */
+            max-width: 1200px; /* จำกัดความกว้างไม่ให้ใหญ่เกินไป */
             width: 100%;
-            flex-wrap: wrap; 
+            flex-wrap: wrap; /* ถ้าเปิดในจอเล็ก ให้ฝั่งขวาตกลงมาอยู่ด้านล่างอัตโนมัติ */
         }
 
         .form-section {
@@ -35,7 +37,7 @@
         }
 
         .image-section {
-            flex: 1.2; /* ให้ฝั่งรูปภาพกว้างกว่าฝั่งฟอร์มนิดหน่อย จะได้โชว์ตารางชัดๆ */
+            flex: 1.2; /* ให้ฝั่งรูปภาพตารางกว้างกว่าฝั่งฟอร์มนิดหน่อย จะได้เห็นชัดๆ */
             min-width: 350px;
             display: flex;
             justify-content: center;
@@ -77,6 +79,7 @@
             box-sizing: border-box;
         }
         
+        /* สไตล์สำหรับช่องแสดงผลลัพธ์ (ทำพื้นหลังสีเทา เพื่อสื่อว่าห้ามพิมพ์) */
         input[readonly] {
             background-color: #e9ecef;
             color: #495057;
@@ -84,10 +87,10 @@
             border: 1px solid #ced4da;
         }
 
-        /* 2. พระเอกของเรา: เปลี่ยนจาก flex เป็น grid เพื่อล็อกขนาดกล่อง */
+        /* จุดสำคัญ: ใช้ CSS Grid แบ่งพื้นที่ช่องกรอกและปุ่ม เพื่อล็อกขนาดให้ตรงกันเป๊ะๆ ทุกบรรทัด */
         .income-row {
             display: grid;
-            /* แบ่งพื้นที่เป็น: ส่วนกล่องข้อความ (1fr) | ปุ่ม+ (35px) | ปุ่ม- (35px) */
+            /* แบ่งอัตราส่วน: กล่องพิมพ์ (ยืดได้เต็มที่ 1fr) | ปุ่มบวก (35px) | ปุ่มลบ (35px) */
             grid-template-columns: 1fr 35px 35px; 
             align-items: center;
             margin-bottom: 10px;
@@ -106,6 +109,8 @@
             justify-content: center;
             align-items: center;
         }
+        
+        /* สไตล์ตอนปุ่มโดนล็อก (กดไม่ได้) */
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -113,6 +118,7 @@
         .btn-add { background-color: #4CAF50; }
         .btn-remove { background-color: #f44336; }
         
+        /* จุดแสดงข้อความแจ้งเตือน Error */
         #error-message {
             color: #dc3545;
             font-weight: bold;
@@ -169,36 +175,46 @@
     </div>
 
     <script>
+        // สร้างตัวแปรเก็บจำนวนช่องกรอกรายได้ปัจจุบัน (จำกัดให้เพิ่มได้สูงสุด 3 ช่อง)
         let incomeBoxCount = 1;
         const MAX_BOXES = 3;
 
+        // ฟังก์ชันสำหรับเช็คว่าควรล็อก (disabled) ปุ่ม + หรือ - ตอนไหนบ้าง
         function updateButtons() {
-            document.getElementById('add-btn').disabled = (incomeBoxCount >= MAX_BOXES);
-            document.getElementById('remove-btn').disabled = (incomeBoxCount <= 1);
+            document.getElementById('add-btn').disabled = (incomeBoxCount >= MAX_BOXES); // ถ้าครบ 3 ห้ามบวก
+            document.getElementById('remove-btn').disabled = (incomeBoxCount <= 1); // ถ้าเหลือ 1 ห้ามลบ
         }
 
+        // ฟังก์ชันสร้างช่องกรอกรายได้เพิ่ม (ใช้ DOM สร้างแท็กใหม่แทรกเข้าไป)
         function addIncomeBox() {
             if (incomeBoxCount >= MAX_BOXES) return;
+
             const container = document.getElementById('income-container');
             const newRow = document.createElement('div');
             newRow.className = 'income-row';
-            // เพิ่มเข้ามาแค่ Input ตัว Grid CSS จะล็อกความยาวให้เท่าข้างบนเอง
+            // ผูก Event oninput ไว้ด้วย เพื่อให้ช่องที่สร้างใหม่สามารถคำนวณเรียลไทม์ได้เหมือนช่องแรก
             newRow.innerHTML = `<input type="text" class="income-input" oninput="calculateTax()" placeholder="กรอกรายได้เพิ่มเติม...">`;
+            
             container.appendChild(newRow);
             incomeBoxCount++;
+            
             updateButtons();
-            calculateTax(); 
+            calculateTax(); // สั่งให้คำนวณใหม่ เผื่อผู้ใช้อยากเห็นการอัปเดตแบบเรียลไทม์
         }
 
+        // ฟังก์ชันสำหรับลบช่องกรอกรายได้อันล่างสุดทิ้ง
         function removeIncomeBox() {
             if (incomeBoxCount <= 1) return;
+
             const container = document.getElementById('income-container');
-            container.removeChild(container.lastChild); 
+            container.removeChild(container.lastChild); // ลบกล่องล่าสุดที่ถูกสร้างขึ้น
             incomeBoxCount--;
+            
             updateButtons();
-            calculateTax(); 
+            calculateTax(); // พอช่องหายไป ต้องสั่งให้คำนวณใหม่ด้วย
         }
 
+        // ฟังก์ชันหลักที่ใช้ดัก Error และคำนวณภาษี (ทำงานทันทีที่มีการพิมพ์)
         function calculateTax() {
             const inputs = document.querySelectorAll('.income-input');
             const errorMsgElement = document.getElementById('error-message');
@@ -208,25 +224,32 @@
             
             let totalIncome = 0;
             let hasError = false;
-            errorMsgElement.innerText = ''; 
+            errorMsgElement.innerText = ''; // ล้างข้อความแจ้งเตือนสีแดงออกก่อนเริ่มเช็ค
 
+            // 1. วนลูปดึงค่าจากทุกช่องมาบวกกัน พร้อมกับเช็คว่าผู้ใช้กรอกข้อมูลถูกต้องไหม
             inputs.forEach(input => {
                 const valueStr = input.value.trim();
-                if (valueStr === '') return; 
+                if (valueStr === '') return; // ถ้าเป็นช่องว่างเฉยๆ ให้ข้ามไป ไม่นำมาคิด
 
                 const valueNum = Number(valueStr);
 
+                // ดักจับ Error: ถ้าผู้ใช้ใส่ตัวอักษร (ไม่ใช่ตัวเลข)
                 if (isNaN(valueNum)) {
                     hasError = true;
                     errorMsgElement.innerText = '⚠️ กรุณากรอกตัวเลขเท่านั้น (ห้ามใส่ตัวอักษร)';
-                } else if (valueNum < 0) {
+                } 
+                // ดักจับ Error: ถ้าผู้ใช้ใส่เลขติดลบ
+                else if (valueNum < 0) {
                     hasError = true;
                     errorMsgElement.innerText = '⚠️ มีรายได้บางรายการเป็นค่าติดลบ';
-                } else {
+                } 
+                // ถ้าถูกต้องทั้งหมด ให้นำค่ามาบวกสะสมไว้ใน totalIncome
+                else {
                     totalIncome += valueNum;
                 }
             });
 
+            // ถ้าตรวจพบ Error ให้เคลียร์ช่องผลลัพธ์ (Read-only) ทิ้ง แล้วหยุดการทำงานทันที
             if (hasError) {
                 totalIncomeElement.value = '';
                 taxRateElement.value = '';
@@ -234,12 +257,15 @@
                 return;
             }
 
+            // นำยอดรายได้รวมไปแสดงผล (ใช้ toLocaleString เพื่อใส่ลูกน้ำ ให้อ่านง่าย)
             totalIncomeElement.value = totalIncome.toLocaleString('th-TH', {minimumFractionDigits: 2});
 
+            // 2. นำรายได้รวมมาคำนวณภาษีแบบขั้นบันได (Progressive Tax)
             let totalTax = 0;
-            let maxRate = 0; 
+            let maxRate = 0; // เก็บอัตรา % สูงสุดของฐานที่คำนวณไปถึง
             let remainingIncome = totalIncome;
 
+            // วิธีคิด: เช็คจากฐานราคาสูงสุดลงมาล่างสุด แล้วหักลบยอดที่โดนหักภาษีไปแล้วออกไปเรื่อยๆ
             if (remainingIncome > 5000000) {
                 totalTax += (remainingIncome - 5000000) * 0.35;
                 remainingIncome = 5000000;
@@ -276,10 +302,12 @@
                 if (maxRate === 0) maxRate = 5;
             }
 
+            // 3. นำผลลัพธ์อัตราภาษีและยอดที่ต้องจ่ายไปแสดงบนหน้าเว็บ
             taxRateElement.value = maxRate > 0 ? `${maxRate}%` : 'ได้รับการยกเว้น';
             taxAmountElement.value = totalTax.toLocaleString('th-TH', {minimumFractionDigits: 2});
         }
 
+        // เรียกรันฟังก์ชันล็อกปุ่มไว้ตั้งแต่โหลดหน้าเว็บครั้งแรก
         updateButtons();
     </script>
 
