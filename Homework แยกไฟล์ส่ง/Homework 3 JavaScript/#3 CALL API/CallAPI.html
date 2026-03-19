@@ -46,7 +46,7 @@
     <div id="datetime-display">กำลังโหลดข้อมูล...</div>
 
     <script>
-        // ฟังก์ชันนี้รับค่า ISO String จาก API มาแปลงเป็นข้อความภาษาไทยตามที่อาจารย์กำหนดครับ
+        // ฟังก์ชันนี้รับค่า ISO String จาก API มาแปลงเป็นข้อความภาษาไทยตามที่อาจารย์กำหนด
         function formatThaiDateTime(isoString) {
             const date = new Date(isoString);
             const thaiMonths = [
@@ -94,7 +94,7 @@
                     displayElement.className = 'success'; // โชว์ตัวหนังสือสีดำปกติ
                 })
                 .catch(error => {
-                    // บล็อกนี้จะคอยดัก Error ทุกรูปแบบครับ ไม่ว่าจะเน็ตหลุด หรือเกิด Timeout จากที่เราตั้งไว้ 3 วิ
+                    // บล็อกนี้จะคอยดัก Error ทุกรูปแบบ ไม่ว่าจะเน็ตหลุด หรือเกิด Timeout จากที่เราตั้งไว้ 3 วิ
                     console.log('Error details:', error.toString());
                     displayElement.innerText = 'ระบบเครือข่ายล้มเหลว';
                     displayElement.className = 'error';

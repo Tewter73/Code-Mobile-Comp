@@ -48,7 +48,7 @@ a:hover {
     flex: 1 1 auto; /* สั่งให้ยืดขยายกินพื้นที่ว่างที่เหลือทั้งหมด (เพื่อดัน Footer ลงไป) */
     display: flex;
     flex-flow: row;
-    min-height: 0; /* ทริคสำคัญ: กันไม่ให้กล่องขยายทะลุจอ และช่วยให้ Scrollbar ภายในทำงานได้ */
+    min-height: 0; /* กันไม่ให้กล่องขยายทะลุจอ และช่วยให้ Scrollbar ภายในทำงานได้ */
 }
 
 /* 3.1 แถบเมนูด้านซ้าย (Sidebar) */
@@ -73,7 +73,7 @@ main {
 /* 4. ส่วนท้าย (Sticky Footer) */
 .row.footer {
     flex: 0 1 auto; /* ล็อกความสูงไว้ พอกล่องตรงกลางขยาย ตัวนี้จะติดขอบจอด้านล่างเสมอ */
-    background-color: #FFD100; /* โหมดนี้ใช้ Footer สีเหลืองตามภาพตัวอย่าง */
+    background-color: #FFD100; /* โหมดนี้ใช้ Footer สีเหลือง */
     color: black;
     text-align: center;
     padding: 15px;
