@@ -1,0 +1,79 @@
+/* นำเข้าฟอนต์ Sarabun */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
+
+/* รีเซ็ตค่าพื้นฐาน */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #000000; /* พื้นหลังสีดำ */
+    color: #ffffff; /* ตัวหนังสือสีขาว */
+}
+
+/* ลิงก์เมนูสีขาว ไม่มีเส้นใต้ */
+a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* --- จัด Layout แบบ Flexbox --- */
+.box {
+    display: flex;
+    flex-flow: column;
+    height: 100vh; /* บังคับสูงเต็มจอ */
+}
+
+.row.header {
+    flex: 0 1 auto;
+    background-color: #333333; /* Header สีเทาเข้ม */
+    padding: 30px;
+    text-align: center;
+    border-bottom: 1px solid #555555;
+}
+
+.row.content {
+    flex: 1 1 auto; /* ส่วนนี้เป็นยางยืด */
+    display: flex;
+    flex-flow: row;
+    min-height: 0; /* ให้เกิด Scrollbar ด้านในได้ */
+}
+
+nav {
+    width: 250px;
+    background-color: #222222; /* เมนูสีเทาเข้มกว่า */
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid #444444;
+}
+
+nav ul { list-style: none; }
+nav li { margin-bottom: 15px; }
+
+main {
+    flex: 1;
+    background-color: #111111; /* เนื้อหาสีดำอมเทา */
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.row.footer {
+    flex: 0 1 auto;
+    background-color: #333333; /* Footer สีเทาเข้ม */
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid #555555;
+}
+
+/* รองรับมือถือ */
+@media (max-width: 600px) {
+    .row.content { flex-direction: column; }
+    nav { width: 100%; flex: 0 0 auto; border-right: none; border-bottom: 1px solid #444444; }
+}

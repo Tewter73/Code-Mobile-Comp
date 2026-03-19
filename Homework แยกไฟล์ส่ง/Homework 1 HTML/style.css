@@ -1,0 +1,100 @@
+/* รีเซ็ตค่าพื้นฐาน */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Sarabun', sans-serif;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+}
+
+/* --- เริ่มต้นการทำ Layout แบบ Flexbox --- */
+/* 1. กล่องหลัก (อิงจาก .box ใน Hint) บังคับความสูง 100vh ให้เต็มจอพอดี */
+.box {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+
+/* 2. ส่วนหัว บังคับไม่ให้ยืด/หด */
+.row.header {
+    flex: 0 1 auto;
+    background-color: #737373; /* สีเทาเข้มแบบในรูป */
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.row.header h1 {
+    font-size: 2.5rem;
+}
+
+/* 3. กล่องเนื้อหาตรงกลาง (อิงจาก .row.content ใน Hint) ให้ทำหน้าที่เป็นยางยืด */
+.row.content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: row;
+    min-height: 0; /* สำคัญมาก เพื่อให้แสดง Scrollbar ด้านในได้ */
+}
+
+/* 3.1 เมนูด้านซ้าย */
+nav {
+    width: 200px;
+    background-color: #d9d9d9; /* สีเทาอ่อนแบบในรูป */
+    padding: 20px;
+    overflow-y: auto;
+}
+
+nav ul {
+    list-style-type: none;
+}
+
+nav ul li {
+    margin-bottom: 15px;
+}
+
+nav ul li a:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* 3.2 พื้นที่เนื้อหาด้านขวา */
+main {
+    flex: 1; /* กินพื้นที่ที่เหลือทั้งหมด */
+    background-color: #f2f2f2; /* สีเทาอ่อนมากๆ */
+    padding: 30px;
+    overflow-y: auto; /* เนื้อหายาวแค่ไหนก็เลื่อนแค่ในกล่องนี้ */
+}
+
+main h2 {
+    margin-bottom: 15px;
+}
+
+/* 4. ส่วนท้าย บังคับไม่ให้ยืด/หด ตอกหมุดติดขอบล่างเสมอ */
+.row.footer {
+    flex: 0 1 auto;
+    background-color: #737373; /* สีเทาเข้มแบบในรูป */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+}
+
+/* ทำให้รองรับหน้าจอมือถือ */
+@media (max-width: 600px) {
+    .row.content {
+        flex-direction: column;
+    }
+    nav {
+        width: 100%;
+        flex: 0 0 auto;
+    }
+}

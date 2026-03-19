@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์รวมข้อมูลการออกกำลังกาย</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link id="theme-style" rel="stylesheet" href="Color.css">
+</head>
+<body>
+
+    <div class="box">
+        
+        <header class="row header">
+            <h1>การออกกำลังกายเพื่อสุขภาพ</h1>
+        </header>
+
+        <div class="row content">
+            
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="changeContent('cardio'); return false;">คาร์ดิโอ (Cardio)</a></li>
+                    <li><a href="#" onclick="changeContent('strength'); return false;">เวทเทรนนิ่ง (Strength)</a></li>
+                    <li><a href="#" onclick="changeContent('yoga'); return false;">โยคะ (Yoga)</a></li>
+                    <li><a href="#" onclick="changeContent('pilates'); return false;">พิลาทิส (Pilates)</a></li>
+                </ul>
+            </nav>
+
+            <main>
+                <article>
+                    <h2 id="content-title">คาร์ดิโอ (Cardio Training)</h2>
+                    <div id="content-body">
+                        <p>คาร์ดิโอ (Cardiovascular Exercise) คือการออกกำลังกายที่เน้นการกระตุ้นระบบไหลเวียนโลหิต อัตราการเต้นของหัวใจ และปอดให้ทำงานอย่างต่อเนื่อง ช่วยเผาผลาญไขมันสะสมและเพิ่มความอึดให้ร่างกาย</p>
+                        <br>
+                        <p>รูปแบบของการทำคาร์ดิโอ:</p>
+                        <p>- LISS (Low-Intensity Steady State): คาร์ดิโอความเข้มข้นต่ำแต่ต่อเนื่อง</p>
+                        <p>- MICT (Moderate-Intensity Continuous Training): คาร์ดิโอระดับปานกลาง</p>
+                        <p>- HIIT (High-Intensity Interval Training): คาร์ดิโอความเข้มข้นสูงสลับพัก</p>
+                        <br>
+                        <p>อุปกรณ์หรือกิจกรรมยอดนิยม: ลู่วิ่งไฟฟ้า, เครื่องเดินวงรี, กระโดดเชือก, ว่ายน้ำ, ปั่นจักรยาน</p>
+                    </div>
+                </article>
+            </main>
+            
+        </div>
+
+        <footer class="row footer">
+            <p>รหัสนิสิต 6634406123 นายคุณานนต์ โสภาเจริญ</p>
+            <p>รหัสนิสิต 6634403223 นายกิตติธัช ทวีผลสมเกียรติ</p>
+            <p>รหัสนิสิต 6634438223 นายปภพ กิตติภิญโญชัย</p>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* --- โครงสร้างหลัก (CSS Reset และ Layout) --- */
+/* --- โครงสร้างหลักแบบแยก Scroll ภายใน (เหมือนงาน 7 สิ่งมหัศจรรย์) --- */
 * {
     margin: 0;
     padding: 0;
@@ -6,32 +6,29 @@
 }
 
 body {
-    /* กำหนดฟอนต์ Sarabun และยกเว้นเส้นใต้ลิงก์ตามข้อกำหนด */
     font-family: 'Sarabun', sans-serif;
-    color: black;
-    text-decoration: none;
-    /* เตรียมพื้นหลังให้ชิดขอบ Browser ไม่มีช่องว่าง */
-    min-height: 100vh;
+    margin: 0;
+    /* ย้าย display flex มาควบคุมความสูงที่ body หรือกล่องหลัก */
 }
 
-/* เอาเส้นใต้และกำหนดสีดำให้ลิงก์ทั่วไป */
 a {
     text-decoration: none;
     color: black;
 }
 
-/* --- กุญแจสำคัญ: จัดการ Flexbox เพื่อให้ Footer ติดล่าง --- */
 .main-container {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* ความสูงขั้นต่ำเท่ากับหน้าจอ */
+    flex-flow: column;
+    height: 100vh; /* บังคับความสูงเท่าหน้าจอพอดีเป๊ะ */
 }
 
-/* ส่วนหัวหน้าเว็บ */
 .header {
+    background-color: #2563eb; 
+    color: white;
     padding: 30px;
     text-align: center;
     position: relative;
+    flex: 0 1 auto; /* ไม่ให้ยืดหด */
 }
 
 .header button {
@@ -39,23 +36,25 @@ a {
     top: 15px;
     right: 15px;
     padding: 8px 15px;
+    background-color: #f59e0b; 
+    border: 1px solid #d97706;
+    color: #1f2937;
     cursor: pointer;
     border-radius: 5px;
 }
 
-/* คอนเทนเนอร์เนื้อหาตรงกลาง */
 .content-wrapper {
     display: flex;
-    /* ยืดส่วนเนื้อหาตรงกลางให้เต็มพื้นที่ เพื่อดัน Footer ลงล่างสุด */
-    flex: 1 1 auto; 
-    padding: 20px;
+    flex-flow: row;
+    flex: 1 1 auto; /* ยืดให้เต็มพื้นที่ที่เหลือตรงกลาง */
+    min-height: 0; /* สำคัญมาก! เพื่อให้กล่องด้านในแสดง Scrollbar ได้ */
 }
 
-/* เมนูด้านซ้าย */
 .sidebar {
-    width: 250px;
+    width: 280px;
+    background-color: #e5e7eb; 
     padding: 20px;
-    border-radius: 8px;
+    overflow-y: auto; /* ถ้าเมนูยาวเกินให้เลื่อนแค่ตรงนี้ */
 }
 
 .sidebar h2 {
@@ -78,20 +77,28 @@ a {
     transition: background 0.3s;
 }
 
-/* เนื้อหาตรงกลาง */
+.sidebar .menu-link:hover {
+    background-color: #d1d5db; 
+}
+
+.sidebar .menu-link.active {
+    background-color: #3b82f6; 
+    color: white;
+}
+
 .main-content {
-    flex: 1; /* ยืดเนื้อหาตรงกลางให้เต็มพื้นที่ที่เหลือ */
-    padding: 20px;
-    margin-left: 20px;
-    border-radius: 8px;
+    background-color: white; 
+    flex: 1; /* กินพื้นที่ที่เหลือจาก Sidebar */
+    padding: 30px;
+    overflow-y: auto; /* เนื้อหายาวแค่ไหน ก็จะเลื่อน Scroll แค่ในกล่องนี้ */
 }
 
 .content-block {
-    display: none; /* ซ่อนเนื้อหาทั้งหมดเป็นค่าเริ่มต้น */
+    display: none;
 }
 
 .content-block.active {
-    display: block; /* แสดงเฉพาะเนื้อหาที่ Active */
+    display: block;
 }
 
 .content-block h2 {
@@ -100,56 +107,40 @@ a {
 
 .content-block p, .content-block ul {
     margin-bottom: 15px;
+    line-height: 1.6;
 }
 
 .content-block ul {
     padding-left: 20px;
 }
 
-/* ส่วนท้าย (Footer) */
 .footer {
-    padding: 20px;
+    background-color: #f3f4f6; 
+    border-top: 1px solid #d1d5db;
+    padding: 15px;
     text-align: center;
     font-size: 0.9rem;
+    flex: 0 1 auto; /* ไม่ให้ยืดหด ตอกหมุดติดล่าง */
 }
 
-/* --- กำหนดสีโหมดปกติ (โหมดสี / สว่าง) --- */
-body {
-    background-color: #f9fafb; /* พื้นหลังสว่าง */
+.footer p {
+    margin: 3px 0;
 }
 
-.header {
-    background-color: #2563eb; /* หัวเว็บสีฟ้า */
-    color: white;
-}
+/* รองรับมือถือ (Responsive) */
+@media (max-width: 600px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
 
-.header h1 { color: white; }
-.header button {
-    background-color: #f59e0b; /* ปุ่มสีทอง */
-    border: 1px solid #d97706;
-    color: #1f2937;
-}
+    .sidebar {
+        width: 100%;
+        flex: 0 0 auto;
+        overflow-y: auto;
+    }
 
-.sidebar {
-    background-color: #e5e7eb; /* เมนูสีเทาอ่อน */
-    border: 1px solid #d1d5db;
-}
-
-.sidebar .menu-link:hover {
-    background-color: #d1d5db; /* เอฟเฟกต์โฮเวอร์เมนู */
-}
-
-.sidebar .menu-link.active {
-    background-color: #3b82f6; /* สีเมนูที่ถูกเลือก */
-    color: white;
-}
-
-.main-content {
-    background-color: white; /* พื้นหลังเนื้อหาสีขาว */
-    border: 1px solid #e5e7eb;
-}
-
-.footer {
-    background-color: #f3f4f6; /* ท้ายเว็บสีเทาอ่อน */
-    border-top: 1px solid #d1d5db;
+    .main-content {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
 }
