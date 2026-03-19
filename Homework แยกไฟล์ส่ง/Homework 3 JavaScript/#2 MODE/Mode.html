@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toggle Dark/Light Mode</title>
     <style>
-        /* 1. รีเซ็ตค่าและใช้ฟอนต์แนว Minimal (ระบบจะดึงฟอนต์ที่สวยที่สุดของเครื่องมาใช้) */
         body {
             margin: 0;
             padding: 0;
@@ -13,38 +12,40 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5f5f7; /* สีขาวอมเทานิดๆ ดูพรีเมียมแบบ Apple */
+            background-color: #f5f5f7; 
             color: #1d1d1f;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            
-            /* เอฟเฟกต์เฟดสี นุ่มนวล 0.5 วินาที */
-            transition: background-color 0.5s ease, color 0.5s ease;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.8s ease, color 0.8s ease; /* ปรับให้พื้นหลังเปลี่ยนช้าลงนิดนึงด้วย (0.8s) */
         }
 
-        /* 2. จัดกลุ่มเนื้อหาให้อยู่ตรงกลางจอ */
         .container {
             text-align: center;
             max-width: 500px;
             padding: 40px;
         }
 
+        /* ตกแต่งไอคอนบอกสถานะด้านบนสุด */
+        .theme-icon {
+            font-size: 4rem; 
+            margin-bottom: 10px;
+            /* เพิ่ม transition ให้รองรับเรื่องความโปร่งใส (opacity) ใช้เวลา 0.4 วิ */
+            transition: opacity 0.4s ease, transform 0.4s ease; 
+        }
+
         h1 {
             margin-top: 0;
             font-size: 2.2rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
             margin-bottom: 15px;
         }
 
         p {
             font-size: 1.1rem;
-            color: #6e6e73; /* สีเทาสำหรับข้อความรอง ให้ดูมีมิติ */
+            color: #6e6e73; 
             margin-bottom: 35px;
             line-height: 1.5;
-            transition: color 0.5s ease;
+            transition: color 0.8s ease;
         }
 
-        /* 3. ตกแต่งปุ่มสไตล์ Minimal */
         button {
             padding: 12px 28px;
             font-size: 1rem;
@@ -53,32 +54,27 @@
             background-color: #ffffff;
             color: #1d1d1f;
             border: 1px solid #d2d2d7;
-            border-radius: 30px; /* ปุ่มทรงแคปซูล */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* เงาบางๆ ให้ปุ่มดูลอยขึ้นมา */
-            
-            transition: all 0.3s ease; /* เอฟเฟกต์ตอนโฮเวอร์เมาส์ */
+            border-radius: 30px; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); 
+            transition: all 0.3s ease; 
         }
 
-        /* เอฟเฟกต์ตอนเอาเมาส์ชี้ปุ่ม */
         button:hover {
             background-color: #f0f0f0;
-            transform: translateY(-2px); /* ปุ่มขยับลอยขึ้นนิดนึง */
+            transform: translateY(-2px); 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        /* ------------------------------------------- */
-        /* 4. คลาสสำหรับโหมดมืด (Dark Mode) */
-        /* ------------------------------------------- */
+        /* --- โหมดมืด --- */
         body.dark-mode {
-            background-color: #121212; /* สีดำที่ไม่ใช่ดำสนิท ช่วยถนอมสายตา */
+            background-color: #121212; 
             color: #f5f5f7;
         }
 
         body.dark-mode p {
-            color: #a1a1a6; /* สีเทาสำหรับข้อความรองในโหมดมืด */
+            color: #a1a1a6; 
         }
 
-        /* ตกแต่งปุ่มเวลาอยู่ในโหมดมืด */
         body.dark-mode button {
             background-color: #2c2c2c;
             color: #ffffff;
@@ -88,28 +84,46 @@
 
         body.dark-mode button:hover {
             background-color: #3a3a3a;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <div id="top-icon" class="theme-icon">☀️</div>
+        
         <h1>Toggle Dark/Light Mode</h1>
         <p>Click the button to toggle between dark and light mode for this page.</p>
-        <button onclick="toggleTheme()" id="theme-btn">Toggle dark mode</button>
+        
+        <button onclick="toggleTheme()" id="theme-btn">🌙 Toggle dark mode</button>
     </div>
 
     <script>
         function toggleTheme() {
+            // 1. สลับคลาสพื้นหลังหน้าเว็บทันที
             document.body.classList.toggle("dark-mode");
             
             const btn = document.getElementById("theme-btn");
-            if (document.body.classList.contains("dark-mode")) {
-                btn.innerText = "Toggle light mode";
-            } else {
-                btn.innerText = "Toggle dark mode";
-            }
+            const topIcon = document.getElementById("top-icon");
+            
+            // 2. สั่งให้ไอคอนค่อยๆ จางหายไปก่อน (ใช้ CSS opacity = 0)
+            topIcon.style.opacity = 0;
+            
+            // 3. ใช้ setTimeout เพื่อ "หน่วงเวลา" รอให้ไอคอนจางจนมิด (ใช้เวลา 400 มิลลิวินาที หรือ 0.4 วินาที)
+            // แล้วค่อยสลับรูป Emoji
+            setTimeout(() => {
+                if (document.body.classList.contains("dark-mode")) {
+                    topIcon.innerText = "🌙";
+                    btn.innerText = "☀️ Toggle light mode";
+                } else {
+                    topIcon.innerText = "☀️";
+                    btn.innerText = "🌙 Toggle dark mode";
+                }
+                
+                // 4. พอเปลี่ยนรูปเสร็จ ก็สั่งให้ไอคอนค่อยๆ สว่างกลับขึ้นมาใหม่ (opacity = 1)
+                topIcon.style.opacity = 1;
+                
+            }, 300); // ตัวเลข 400 ตรงนี้คือความหน่วง (มิลลิวินาที) ยิ่งเยอะยิ่งเปลี่ยนช้า
         }
     </script>
 
