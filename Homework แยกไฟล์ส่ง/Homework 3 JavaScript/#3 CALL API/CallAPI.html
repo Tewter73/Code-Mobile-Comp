@@ -16,20 +16,16 @@
         }
         
         #datetime-display {
-            /* ขยายขนาดฟอนต์ให้ใหญ่ขึ้นมาก */
             font-size: 48px; 
             font-weight: bold;
-            /* เพิ่มพื้นที่ว่างรอบข้อความให้กล่องดูใหญ่ขึ้น */
             padding: 40px 60px; 
-            /* เพิ่มความโค้งมนให้สมดุลกับขนาดกล่อง */
             border-radius: 16px; 
             background: #fff;
-            /* ปรับเงาให้ดูมีมิติสอดคล้องกับกล่องที่ใหญ่ขึ้น */
             box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
             text-align: center;
         }
 
-        /* ปรับขนาดฟอนต์ให้เล็กลงอัตโนมัติเมื่อเปิดบนหน้าจอมือถือ */
+        /* เผื่อไว้สำหรับมือถือ (Responsive) ถ้าจอเล็กกว่า 768px ให้ลดขนาดฟอนต์ลงจะได้ไม่ล้นจอ */
         @media (max-width: 768px) {
             #datetime-display {
                 font-size: 28px;
@@ -38,7 +34,7 @@
         }
 
         .error {
-            color: #dc3545; /* ปรับสีแดงให้ดูสบายตาขึ้น */
+            color: #dc3545;
         }
         .success {
             color: #333;
@@ -50,7 +46,7 @@
     <div id="datetime-display">กำลังโหลดข้อมูล...</div>
 
     <script>
-        // ฟังก์ชันสำหรับแปลงรูปแบบวันที่ (ISO 8601) เป็นข้อความภาษาไทยตาม Format ที่กำหนด
+        // ฟังก์ชันนี้รับค่า ISO String จาก API มาแปลงเป็นข้อความภาษาไทยตามที่อาจารย์กำหนดครับ
         function formatThaiDateTime(isoString) {
             const date = new Date(isoString);
             const thaiMonths = [
@@ -60,9 +56,9 @@
             
             const day = date.getDate();
             const month = thaiMonths[date.getMonth()];
-            const year = date.getFullYear() + 543; // แปลง ค.ศ. เป็น พ.ศ.
+            const year = date.getFullYear() + 543; // จับ ค.ศ. มาบวก 543 ให้เป็น พ.ศ.
             
-            // เติม 0 ด้านหน้าหากตัวเลขหลักเดียว
+            // เช็คว่าถ้าชั่วโมง/นาที/วินาทีเป็นเลขหลักเดียว ให้เติม '0' ข้างหน้าด้วยคำสั่ง padStart
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
             const seconds = String(date.getSeconds()).padStart(2, '0');
@@ -70,48 +66,49 @@
             return `วันที่ ${day} ${month} ${year}\nเวลา ${hours}:${minutes}:${seconds} น.`;
         }
 
-        // ฟังก์ชันหลักในการดึงข้อมูล
+        // ฟังก์ชันหลักสำหรับยิง Fetch API ไปดึงข้อมูล
         function fetchDateTime() {
             const apiUrl = 'https://learningportal.ocsc.go.th/learningspaceapi/localdatetime';
             const displayElement = document.getElementById('datetime-display');
             
-            // ใช้ AbortController เพื่อทำ Timeout (ตั้งไว้ 3 วินาทีตามโจทย์)
+            // สร้าง AbortController มาช่วยจำกัดเวลาเชื่อมต่อ (ตั้ง Timeout ไว้ 3 วินาทีตามโจทย์)
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000); 
 
+            // ใส่ signal เข้าไปใน fetch เพื่อให้เชื่อมกับตัว AbortController ด้านบน
             fetch(apiUrl, { signal: controller.signal })
                 .then(response => {
-                    // หากจำลอง Error ด้วยการ Throw ดื้อๆ สามารถเอาคอมเมนต์ด้านล่างออกได้เลย
                     // throw new Error('network connection timeout'); 
 
+                    // เช็คสถานะก่อน ถ้าโอเคถึงจะแปลงเป็น JSON
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.json(); // แปลง response เป็น JSON
+                    return response.json(); 
                 })
                 .then(data => {
-                    // เมื่อได้ข้อมูลมา นำข้อมูล data.datetime มาจัด Format
+                    // เอาข้อมูล data.datetime ที่ได้ ส่งไปแปลงเป็นภาษาไทยผ่านฟังก์ชันที่เราเตรียมไว้
                     const thaiDateTimeStr = formatThaiDateTime(data.datetime);
                     
                     displayElement.innerText = thaiDateTimeStr;
-                    displayElement.className = 'success';
+                    displayElement.className = 'success'; // โชว์ตัวหนังสือสีดำปกติ
                 })
                 .catch(error => {
-                    // จัดการกรณี Error (รวมถึง Timeout จากการ abort และ Network Error กรณีปิดเน็ต)
+                    // บล็อกนี้จะคอยดัก Error ทุกรูปแบบครับ ไม่ว่าจะเน็ตหลุด หรือเกิด Timeout จากที่เราตั้งไว้ 3 วิ
                     console.log('Error details:', error.toString());
                     displayElement.innerText = 'ระบบเครือข่ายล้มเหลว';
                     displayElement.className = 'error';
                 })
                 .finally(() => {
-                    // ยกเลิก Timeout เพื่อไม่ให้กินหน่วยความจำเมื่อ Fetch ทำงานเสร็จก่อน
+                    // ถ้าดึงข้อมูลเสร็จก่อน 3 วิ ก็สั่งเคลียร์ Timeout ทิ้ง เพื่อไม่ให้เปลืองทรัพยากรเครื่อง
                     clearTimeout(timeoutId);
                 });
         }
 
-        // เรียกใช้งานครั้งแรกทันที
+        // เรียกใช้งานครั้งแรกทันทีตอนโหลดเว็บ
         fetchDateTime();
 
-        // ตั้งเวลาให้เรียกฟังก์ชันอัปเดตทุกๆ 1 วินาที (1000 มิลลิวินาที)
+        // ใช้ setInterval สั่งให้ฟังก์ชัน fetch ทำงานซ้ำทุกๆ 1 วินาที เพื่อให้เวลาเดินเรื่อย ๆ
         setInterval(fetchDateTime, 1000);
     </script>
 
