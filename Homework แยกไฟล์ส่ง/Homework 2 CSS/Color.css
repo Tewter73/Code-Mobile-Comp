@@ -1,20 +1,21 @@
-/* นำเข้าฟอนต์ Sarabun */
+/* นำเข้าฟอนต์ Sarabun จาก Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
 
-/* รีเซ็ตค่าพื้นฐาน */
+/* เคลียร์ค่าขอบต่างๆ ให้เริ่มต้นที่ 0 (CSS Reset) */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ตั้งค่าฟอนต์ โทนสีข้อความ และสีพื้นหลังหลักสำหรับโหมดสีสัน */
 body {
     font-family: 'Sarabun', sans-serif;
     background-color: #ffffff; 
     color: #333333; 
 }
 
-/* ลิงก์เมนูสีชมพูเข้ม ไม่มีเส้นใต้ */
+/* แต่งลิงก์ให้เป็นสีชมพู และซ่อนเส้นใต้ไว้แสดงเฉพาะตอนเอาเมาส์ชี้ */
 a {
     text-decoration: none;
     color: #DE5C8E;
@@ -24,55 +25,67 @@ a:hover {
     text-decoration: underline;
 }
 
-/* --- จัด Layout แบบ Flexbox (โครงสร้างเหมือนไฟล์ BlackWhite) --- */
+/* --- โครงสร้าง Layout หลัก (ใช้ Flexbox ควบคุมเหมือนโหมดขาวดำ) --- */
+
+/* 1. กล่องใหญ่สุด ครอบทั้งเว็บไซต์ */
 .box {
     display: flex;
     flex-flow: column;
-    height: 100vh;
+    height: 100vh; /* บังคับความสูงให้พอดีกับหน้าจอเป๊ะๆ */
 }
 
+/* 2. ส่วนหัว (Header) */
 .row.header {
-    flex: 0 1 auto;
-    background-color: #DE5C8E; /* Header สีชมพู */
+    flex: 0 1 auto; /* ล็อกความสูงไว้ ไม่ให้ยืดหดไปตามพื้นที่ว่าง */
+    background-color: #DE5C8E; /* โหมดนี้ใช้ Header สีชมพู */
     color: white;
     padding: 30px;
     text-align: center;
 }
 
+/* 3. กล่องเนื้อหาตรงกลาง (ส่วนที่ต้องยืดหยุ่นได้) */
 .row.content {
-    flex: 1 1 auto;
+    flex: 1 1 auto; /* สั่งให้ยืดขยายกินพื้นที่ว่างที่เหลือทั้งหมด (เพื่อดัน Footer ลงไป) */
     display: flex;
     flex-flow: row;
-    min-height: 0; 
+    min-height: 0; /* ทริคสำคัญ: กันไม่ให้กล่องขยายทะลุจอ และช่วยให้ Scrollbar ภายในทำงานได้ */
 }
 
+/* 3.1 แถบเมนูด้านซ้าย (Sidebar) */
 nav {
     width: 250px;
     background-color: #F8E1EA; /* เมนูสีชมพูอ่อน */
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: auto; /* ถ้าเมนูยาวเกินจอ ให้เลื่อน Scrollbar เฉพาะส่วนนี้ได้ */
 }
 
 nav ul { list-style: none; }
 nav li { margin-bottom: 15px; }
 
+/* 3.2 พื้นที่แสดงเนื้อหาด้านขวา (Main Content) */
 main {
-    flex: 1;
-    background-color: #ffffff; /* เนื้อหาสีขาว */
+    flex: 1; /* ขยายกว้างให้เต็มพื้นที่ที่เหลือจากเมนูด้านซ้าย */
+    background-color: #ffffff; 
     padding: 30px;
-    overflow-y: auto;
+    overflow-y: auto; /* ถ้าเนื้อหายาว ให้เกิด Scrollbar อ่านได้อิสระ */
 }
 
+/* 4. ส่วนท้าย (Sticky Footer) */
 .row.footer {
-    flex: 0 1 auto;
-    background-color: #FFD100; /* Footer สีเหลือง */
+    flex: 0 1 auto; /* ล็อกความสูงไว้ พอกล่องตรงกลางขยาย ตัวนี้จะติดขอบจอด้านล่างเสมอ */
+    background-color: #FFD100; /* โหมดนี้ใช้ Footer สีเหลืองตามภาพตัวอย่าง */
     color: black;
     text-align: center;
     padding: 15px;
 }
 
-/* รองรับมือถือ */
+/* --- ปรับ Layout สำหรับหน้าจอมือถือ (Responsive) --- */
 @media (max-width: 600px) {
-    .row.content { flex-direction: column; }
-    nav { width: 100%; flex: 0 0 auto; }
+    .row.content { 
+        flex-direction: column; /* เปลี่ยนจากเรียงซ้าย-ขวา เป็นบนลงล่าง */
+    }
+    nav { 
+        width: 100%; /* ให้เมนูกว้างเต็มจอ */
+        flex: 0 0 auto; 
+    }
 }
